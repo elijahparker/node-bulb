@@ -1,0 +1,27 @@
+{
+    "author": "Elijah Parker <mail@timelapseplus.com>",
+    "name": "node-bulb",
+    "description": "low-level remote shutter bulb control",
+    "version": "0.1.0",
+    "homepage": "https://github.com/elijahparker/node-bulb",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/elijahparker/node-bulb.git"
+    },
+    "engines": {
+        "node": "~0.10.0"
+    },
+    "os": ["linux"],
+    "main": "build/Release/bulb.node",
+    "dependencies": {},
+    "scripts": {
+        "preinstall": "node-gyp rebuild",
+        "build-cli": "sh ./build-cli.sh"
+    },
+    "license": "MIT",
+    "contributors": [{
+        "name": "Elijah Parker",
+        "email": "mail@timelapseplus.com",
+        "url": "http://www.timelapseplus.com"
+    }]
+}

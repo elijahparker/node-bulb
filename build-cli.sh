@@ -1,0 +1,1 @@
+gcc bulb.c bulb_cli.c -lmraa -o bulb
