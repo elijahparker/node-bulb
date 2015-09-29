@@ -9,7 +9,7 @@ Setup pins in bulb.h
 
 # usage
 
-``
+```
 var bulb = require('node-bulb');
 
 var options = {
@@ -27,4 +27,4 @@ bulb(options, function(err, start_us, stop_us, actual_us, error_percent) {
     console.log('actual_us:', actual_us);
     console.log('error_percent:', error_percent);
 });
-``
+```
