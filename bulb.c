@@ -44,15 +44,15 @@ uint8_t _bulb_init()
 
 uint8_t _bulb_cleanup(uint8_t passthrough_error)
 {
-    mraa_gpio_write(shutterOut, 0);
-    mraa_gpio_write(focusOut, 0);
+    if(shutterOut) mraa_gpio_write(shutterOut, 0);
+    if(focusOut) mraa_gpio_write(focusOut, 0);
     usleep(3000);
 
-    mraa_gpio_close(shutterOut);
-    mraa_gpio_close(focusOut);
-    mraa_gpio_close(syncIn);
+    if(shutterOut) mraa_gpio_close(shutterOut);
+    if(focusOut) mraa_gpio_close(focusOut);
+    if(syncIn) mraa_gpio_close(syncIn);
 
-    mraa_deinit();
+    //mraa_deinit();
 
     return passthrough_error;
 }
