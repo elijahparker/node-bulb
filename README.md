@@ -3,7 +3,9 @@ low-level camera remote shutter bulb control using mraa for node.js
 
 # requirements
 
-mraa for pin-level i/o
+MRAA library for pin-level i/o
+
+Requires node-gyp for building
 
 Setup pins in bulb.h
 
@@ -28,3 +30,7 @@ bulb(options, function(err, start_us, stop_us, actual_us, error_percent) {
     console.log('error_percent:', error_percent);
 });
 ```
+
+# acknowledgements
+
+based on this awesome template: https://gist.github.com/eristoddle/948f77cc8da2779484cb
