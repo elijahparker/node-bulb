@@ -9,7 +9,7 @@
         "url": "git://github.com/elijahparker/node-bulb.git"
     },
     "engines": {
-        "node": "~5"
+        "node": "~0.10.0"
     },
     "os": ["linux"],
     "main": "build/Release/bulb.node",
