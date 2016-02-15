@@ -1,5 +1,6 @@
 #ifndef BULB_H
 #define BULB_H
+#include <stdint.h>
 #include <sys/time.h>
 #include "lib_gpio.h"
 
