@@ -1,7 +1,7 @@
 #ifndef BULB_H
 #define BULB_H
 #include <sys/time.h>
-#include <mraa.h>
+#include "lib_gpio.h"
 
 #define ST_START 0
 #define ST_SYNCIN 1
@@ -17,8 +17,6 @@
 #define FOCUS_PIN 47
 #define SYNC_PIN 36
 #define SYNC_PIN2 48
-
-#define USE_MMAP 1
 
 #define TIMEOUT_US 500000
 

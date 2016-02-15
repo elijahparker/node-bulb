@@ -1,59 +1,30 @@
 #include "bulb.h"
 
-mraa_gpio_context shutterOut;
-mraa_gpio_context focusOut;
-mraa_gpio_context syncIn;
+#define SHUTTER_TIP_SET() gpio_set_output(SUNXI_PORT_D_BASE, SUNXI_PIO_20)
+#define SHUTTER_RING_SET() gpio_set_output(SUNXI_PORT_D_BASE, SUNXI_PIO_19)
+#define SHUTTER_TIP_CLR() gpio_set_output(SUNXI_PORT_D_BASE, SUNXI_PIO_20)
+#define SHUTTER_RING_CLR() gpio_set_output(SUNXI_PORT_D_BASE, SUNXI_PIO_19)
+
+#define PC_SYNC_READ() (gpio_get_input(SUNXI_PORT_B_BASE, SUNXI_PIO_02) ? 1 : 0)
+#define AUX_TIP_READ() (gpio_get_input(SUNXI_PORT_B_BASE, SUNXI_PIO_03) ? 1 : 0)
 
 uint8_t _bulb_init()
 {
-    mraa_init();
-    mraa_set_log_level(7);
-    mraa_set_priority(99);
+    gpio_init();
 
-    shutterOut = mraa_gpio_init(SHUTTER_PIN);
-    mraa_gpio_owner(shutterOut, 1);
-    if(!shutterOut)
-    {
-        return 1;
-    }
-    mraa_gpio_use_mmaped(shutterOut, USE_MMAP);
-    mraa_gpio_dir(shutterOut, MRAA_GPIO_OUT_LOW);
-    mraa_gpio_mode(shutterOut, MRAA_GPIO_STRONG);
+    gpio_cfg_output(SUNXI_PORT_D_BASE, SUNXI_PIO_20_IDX);
+    gpio_cfg_output(SUNXI_PORT_D_BASE, SUNXI_PIO_19_IDX);
 
-    focusOut = mraa_gpio_init(FOCUS_PIN);
-    mraa_gpio_owner(focusOut, 1);
-    if(!focusOut)
-    {
-        return 1;
-    }
-    mraa_gpio_use_mmaped(focusOut, USE_MMAP);
-    mraa_gpio_dir(focusOut, MRAA_GPIO_OUT_LOW);
-    mraa_gpio_mode(focusOut, MRAA_GPIO_STRONG);
-
-    syncIn = mraa_gpio_init(SYNC_PIN);
-    mraa_gpio_owner(syncIn, 1);
-    if(!syncIn)
-    {
-        return 1;
-    }
-    mraa_gpio_use_mmaped(syncIn, USE_MMAP);
-    mraa_gpio_dir(syncIn, MRAA_GPIO_IN);
+    gpio_cfg_input(SUNXI_PORT_B_BASE, SUNXI_PIO_02_IDX);
+    gpio_cfg_input(SUNXI_PORT_B_BASE, SUNXI_PIO_03_IDX);
 
     return 0;
 }
 
 uint8_t _bulb_cleanup(uint8_t passthrough_error)
 {
-    if(shutterOut) mraa_gpio_write(shutterOut, 0);
-    if(focusOut) mraa_gpio_write(focusOut, 0);
-    usleep(3000);
-
-    if(shutterOut) mraa_gpio_close(shutterOut);
-    if(focusOut) mraa_gpio_close(focusOut);
-    if(syncIn) mraa_gpio_close(syncIn);
-
-    //mraa_deinit();
-
+    SHUTTER_RING_CLR();
+    SHUTTER_TIP_CLR();
     return passthrough_error;
 }
 
@@ -91,23 +62,23 @@ uint8_t bulb(bulb_config_t config, bulb_result_t *result)
         return _bulb_cleanup(ERROR_FAILED_TO_INIT);
     }
 
-    if(!mraa_gpio_read(syncIn))
+    if(!AUX_TIP_READ())
     {
         return _bulb_cleanup(ERROR_INVALID_PC_STATE);
     }
 
-    mraa_gpio_write(focusOut, 1);
+    SHUTTER_RING_SET();
 
     usleep(config.preFocusMs * 1000);
 
     gettimeofday(&startTime, NULL);
-    mraa_gpio_write(shutterOut, 1);
+    SHUTTER_TIP_SET();
     state = ST_SYNCIN;
 
     uint8_t sync, lastSync = 1;
     while(state != ST_ERROR && state != ST_END)
     {
-        sync = mraa_gpio_read(syncIn);
+        sync = AUX_TIP_READ();
         if(sync != lastSync)
         {
             if(state == ST_SYNCIN && sync == 0)
@@ -132,8 +103,8 @@ uint8_t bulb(bulb_config_t config, bulb_result_t *result)
             if(_microSecondDiff(&now, &syncInTime) >= config.bulbMicroSeconds - config.endLagMicroSeconds)
             {
                 gettimeofday(&stopTime, NULL);
-                mraa_gpio_write(shutterOut, 0);
-                mraa_gpio_write(focusOut, 0);
+                SHUTTER_TIP_CLR();
+                SHUTTER_RING_CLR();
                 state = ST_SYNCOUT;
             }
         }
@@ -165,8 +136,8 @@ uint8_t bulb(bulb_config_t config, bulb_result_t *result)
         return _bulb_cleanup(ERROR_STATE_SEQUENCE);
     }
 
-    mraa_gpio_write(shutterOut, 0);
-    mraa_gpio_write(focusOut, 0);
+    SHUTTER_TIP_CLR();
+    SHUTTER_RING_CLR();
     
     return _bulb_cleanup(0);
 }
