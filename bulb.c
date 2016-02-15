@@ -71,7 +71,7 @@ uint8_t bulb(bulb_config_t config, bulb_result_t *result)
 
     usleep(config.preFocusMs * 1000);
 
-    gettimeofday(&startTime, NULL);
+    gettimeofday(&startTime, 0);
     SHUTTER_TIP_SET();
     state = ST_SYNCIN;
 
@@ -83,12 +83,12 @@ uint8_t bulb(bulb_config_t config, bulb_result_t *result)
         {
             if(state == ST_SYNCIN && sync == 0)
             {
-                gettimeofday(&syncInTime, NULL);
+                gettimeofday(&syncInTime, 0);
                 state = ST_STOP;
             }
             else if(state == ST_SYNCOUT && sync == 1)
             {
-                gettimeofday(&syncOutTime, NULL);
+                gettimeofday(&syncOutTime, 0);
                 state = ST_END;
             }
             else
@@ -99,10 +99,10 @@ uint8_t bulb(bulb_config_t config, bulb_result_t *result)
         }
         if(state == ST_STOP)
         {
-            gettimeofday(&now, NULL);
+            gettimeofday(&now, 0);
             if(_microSecondDiff(&now, &syncInTime) >= config.bulbMicroSeconds - config.endLagMicroSeconds)
             {
-                gettimeofday(&stopTime, NULL);
+                gettimeofday(&stopTime, 0);
                 SHUTTER_TIP_CLR();
                 SHUTTER_RING_CLR();
                 state = ST_SYNCOUT;
@@ -110,7 +110,7 @@ uint8_t bulb(bulb_config_t config, bulb_result_t *result)
         }
         else
         {
-            gettimeofday(&now, NULL);
+            gettimeofday(&now, 0);
             int64_t diff = _microSecondDiff(&now, &startTime);
             if((!config.expectSync && state == ST_SYNCIN && (diff > config.bulbMicroSeconds + config.startLagMicroSeconds - config.endLagMicroSeconds)) || diff > TIMEOUT_US + config.bulbMicroSeconds)
             {

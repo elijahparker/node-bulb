@@ -43,4 +43,9 @@ typedef struct {
 } bulb_result_t;
 
 uint8_t bulb(bulb_config_t config, bulb_result_t *result);
+
+uint8_t _bulb_init(void);
+uint8_t _bulb_cleanup(uint8_t passthrough_error);
+int64_t _microSecondDiff(struct timeval *t1, struct timeval *t0);
+
 #endif
