@@ -42,6 +42,24 @@ int64_t _microSecondDiff(struct timeval *t1, struct timeval *t0)
     }
 }
 
+uint8_t bulb_read_aux() {
+    return PC_SYNC_READ();
+}
+
+uint8_t bulb_read_sync() {
+    return AUX_TIP_READ();
+}
+
+uint8_t bulb_set_shutter(uint8_t status) {
+    if(status)
+    {
+        return SHUTTER_TIP_SET();
+    }
+    else
+    {
+        return SHUTTER_TIP_CLR();
+    }
+}
 
 uint8_t bulb(bulb_config_t config, bulb_result_t *result)
 {

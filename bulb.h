@@ -48,4 +48,8 @@ uint8_t _bulb_init(void);
 uint8_t _bulb_cleanup(uint8_t passthrough_error);
 int64_t _microSecondDiff(struct timeval *t1, struct timeval *t0);
 
+uint8_t bulb_read_aux();
+uint8_t bulb_read_sync();
+uint8_t bulb_set_shutter(uint8_t status);
+
 #endif

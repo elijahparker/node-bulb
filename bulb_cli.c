@@ -8,6 +8,7 @@
 #define F 3
 #define T 4
 #define J 5
+#define D 6
 
 int main(int argc, char *argv[])
 {
@@ -28,8 +29,8 @@ int main(int argc, char *argv[])
     uint8_t invalidArgs = 0;
 
     char *args[4];
-    uint8_t found[6];
-    for(i = 0; i < 6; i++) found[i] = 0;
+    uint8_t found[7];
+    for(i = 0; i < 7; i++) found[i] = 0;
 
     for(i = 1; i < argc; i++)
     {
@@ -68,6 +69,10 @@ int main(int argc, char *argv[])
             else if(strcmp(argv[i], "-j") == 0)
             {
                 found[J] = 1;
+            }
+            else if(strcmp(argv[i], "-d") == 0)
+            {
+                found[D] = 1;
             }
             else
             {
@@ -116,7 +121,32 @@ int main(int argc, char *argv[])
             }
         }
 
-        if(found[T])
+        if(found[D])
+        {
+            uint8_t auxReading, syncReading, i = 0, sh = 0;
+            _bulb_init();
+            bulb_shutter_set(0);
+            for(;;)
+            {
+                auxReading = bulb_read_aux();
+                syncReading = bulb_read_sync();
+                printf("Shutter: %d, AUX: %d, SYNC: %d\n", sh, auxReading, syncReading);
+                i++;
+                if(i == 4)
+                {
+                    sh = 1;
+                    bulb_shutter_set(1);
+                }
+                if(i == 8)
+                {
+                    sh = 0;
+                    bulb_shutter_set(0);
+                    i = 0;
+                }
+                usleep(250000);
+            }
+        }
+        else if(found[T])
         {
             // test mode
             config.runTest = 1;
@@ -179,6 +209,7 @@ int main(int argc, char *argv[])
     -i (us)    Sync In lag in microseconds\r\n\
     -o (us)    Sync Out lag in microseconds\r\n\
     -t         Run test\r\n\
+    -d         Debug Inputs\r\n\
     -j         Output JSON\r\n\
 \r\n©2015 Elijah Parker / Timelapse+\r\n\r\n");
         }
