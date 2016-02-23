@@ -5,8 +5,8 @@
 #define SHUTTER_TIP_CLR() gpio_clear_output(SUNXI_PORT_D_BASE, SUNXI_PIO_20)
 #define SHUTTER_RING_CLR() gpio_clear_output(SUNXI_PORT_D_BASE, SUNXI_PIO_19)
 
-#define PC_SYNC_READ() (gpio_get_input(SUNXI_PORT_B_BASE, SUNXI_PIO_02) ? 1 : 0)
-#define AUX_TIP_READ() (gpio_get_input(SUNXI_PORT_B_BASE, SUNXI_PIO_03) ? 1 : 0)
+#define PC_SYNC_READ() (gpio_get_input(SUNXI_PORT_B_BASE, SUNXI_PIO_02) ? 0 : 1)
+#define AUX_TIP_READ() (gpio_get_input(SUNXI_PORT_B_BASE, SUNXI_PIO_03) ? 0 : 1)
 
 uint8_t _bulb_init()
 {
