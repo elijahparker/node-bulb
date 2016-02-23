@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
         {
             uint8_t auxReading, syncReading, i = 0, sh = 0;
             _bulb_init();
-            bulb_shutter_set(0);
+            bulb_set_shutter(0);
             for(;;)
             {
                 auxReading = bulb_read_aux();
@@ -135,12 +135,12 @@ int main(int argc, char *argv[])
                 if(i == 4)
                 {
                     sh = 1;
-                    bulb_shutter_set(1);
+                    bulb_set_shutter(1);
                 }
                 if(i == 8)
                 {
                     sh = 0;
-                    bulb_shutter_set(0);
+                    bulb_set_shutter(0);
                     i = 0;
                 }
                 usleep(250000);
