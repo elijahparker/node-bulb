@@ -2,8 +2,8 @@
 
 #define SHUTTER_TIP_SET() gpio_set_output(SUNXI_PORT_D_BASE, SUNXI_PIO_20)
 #define SHUTTER_RING_SET() gpio_set_output(SUNXI_PORT_D_BASE, SUNXI_PIO_19)
-#define SHUTTER_TIP_CLR() gpio_set_output(SUNXI_PORT_D_BASE, SUNXI_PIO_20)
-#define SHUTTER_RING_CLR() gpio_set_output(SUNXI_PORT_D_BASE, SUNXI_PIO_19)
+#define SHUTTER_TIP_CLR() gpio_clear_output(SUNXI_PORT_D_BASE, SUNXI_PIO_20)
+#define SHUTTER_RING_CLR() gpio_clear_output(SUNXI_PORT_D_BASE, SUNXI_PIO_19)
 
 #define PC_SYNC_READ() (gpio_get_input(SUNXI_PORT_B_BASE, SUNXI_PIO_02) ? 1 : 0)
 #define AUX_TIP_READ() (gpio_get_input(SUNXI_PORT_B_BASE, SUNXI_PIO_03) ? 1 : 0)
@@ -43,11 +43,11 @@ int64_t _microSecondDiff(struct timeval *t1, struct timeval *t0)
 }
 
 uint8_t bulb_read_aux() {
-    return PC_SYNC_READ();
+    return AUX_TIP_READ();
 }
 
 uint8_t bulb_read_sync() {
-    return AUX_TIP_READ();
+    return PC_SYNC_READ();
 }
 
 uint8_t bulb_set_shutter(uint8_t status) {
