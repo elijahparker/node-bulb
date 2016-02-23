@@ -1,1 +1,1 @@
-gcc bulb.c bulb_cli.c -o bulb
+gcc bulb.c bulb_cli.c lib_gpio.c -o bulb
