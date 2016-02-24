@@ -96,7 +96,7 @@ uint8_t bulb(bulb_config_t config, bulb_result_t *result)
     uint8_t sync, lastSync = 1;
     while(state != ST_ERROR && state != ST_END)
     {
-        sync = PC_SYNC_READ(); //AUX_TIP_READ();
+        sync = AUX_TIP_READ();
         if(sync != lastSync)
         {
             if(state == ST_SYNCIN && sync == 0)
