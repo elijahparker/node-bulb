@@ -11,13 +11,9 @@
 #define ST_END 4
 #define ST_ERROR 5
 
-//#define SHUTTER_PIN 15
-//#define FOCUS_PIN 44
-//#define SYNC_PIN 14
-#define SHUTTER_PIN 33
-#define FOCUS_PIN 47
-#define SYNC_PIN 36
-#define SYNC_PIN2 48
+#define FB_USE_AUX_TIP 0b00000001
+#define FB_USE_HOTSHOE 0b00000010
+#define FB_USE_BOTH    (FB_USE_HOTSHOE | FB_USE_AUX_TIP)
 
 #define TIMEOUT_US 500000
 
@@ -33,6 +29,7 @@ typedef struct {
     int32_t startLagMicroSeconds;
     uint8_t expectSync;
     uint8_t runTest;
+    uint8_t fbConfig;
 } bulb_config_t;
 
 typedef struct {

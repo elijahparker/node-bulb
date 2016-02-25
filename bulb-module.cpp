@@ -28,6 +28,7 @@ struct BulbBaton
     int32_t startLagMicroSeconds;
     bool expectSync;
     bool runTest;
+    uint8_t fbConfig;
 
     //outputs
     int64_t startDiff;
@@ -53,6 +54,7 @@ static void BulbAsync(uv_work_t *req)
     config.startLagMicroSeconds = baton->startLagMicroSeconds;
     config.expectSync = (uint8_t)baton->expectSync ? 1 : 0;
     config.runTest = (uint8_t)baton->runTest ? 1 : 0;
+    config.runTest = baton->fbConfig;
 
     // run bulb (blocking)
     uint8_t err = bulb(config, &result);
@@ -120,6 +122,7 @@ Handle<Value> Bulb(const Arguments &args)
     baton->startLagMicroSeconds = 80000;
     baton->expectSync = true;
     baton->runTest = false;
+    baton->fbConfig = FB_USE_BOTH;
 
     // validate and attach options argument
     Local<Value> bulbMicroSeconds = options->Get(String::New("bulbMicroSeconds"));
@@ -128,6 +131,7 @@ Handle<Value> Bulb(const Arguments &args)
     Local<Value> startLagMicroSeconds = options->Get(String::New("startLagMicroSeconds"));
     Local<Value> expectSync = options->Get(String::New("expectSync"));
     Local<Value> runTest = options->Get(String::New("runTest"));
+    Local<Value> fbConfig = options->Get(String::New("fbConfig"));
 
     if (bulbMicroSeconds->IsNumber()) {
       baton->bulbMicroSeconds = (int32_t)bulbMicroSeconds->NumberValue();
@@ -147,6 +151,9 @@ Handle<Value> Bulb(const Arguments &args)
     }
     if (runTest->IsBoolean()) {
       baton->runTest = runTest->ToBoolean()->Value();
+    }
+    if (fbConfig->IsNumber()) {
+      baton->fbConfig = (uint8_t)fbConfig->NumberValue();
     }
 
     // attach baton to uv work request

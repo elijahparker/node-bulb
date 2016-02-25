@@ -5,8 +5,10 @@
 #define SHUTTER_TIP_CLR() gpio_clear_output(SUNXI_PORT_D_BASE, SUNXI_PIO_20)
 #define SHUTTER_RING_CLR() gpio_clear_output(SUNXI_PORT_D_BASE, SUNXI_PIO_19)
 
-#define PC_SYNC_READ() (gpio_get_input(SUNXI_PORT_B_BASE, SUNXI_PIO_02) ? 1 : 0)
+#define HOTSHOE_READ() (gpio_get_input(SUNXI_PORT_B_BASE, SUNXI_PIO_02) ? 1 : 0)
 #define AUX_TIP_READ() (gpio_get_input(SUNXI_PORT_B_BASE, SUNXI_PIO_03) ? 1 : 0)
+
+#define READ_FB() (HOTSHOE_READ() || !(config.fbConfig & FB_USE_HOTSHOE)) && (AUX_TIP_READ() || !(config.fbConfig & FB_USE_AUX_TIP)) 
 
 uint8_t _bulb_init()
 {
@@ -47,7 +49,7 @@ uint8_t bulb_read_aux() {
 }
 
 uint8_t bulb_read_sync() {
-    return PC_SYNC_READ();
+    return HOTSHOE_READ();
 }
 
 uint8_t bulb_set_shutter(uint8_t status) {
@@ -73,6 +75,7 @@ uint8_t bulb(bulb_config_t config, bulb_result_t *result)
         config.startLagMicroSeconds = 0;
         config.endLagMicroSeconds = 0;
         config.expectSync = 1;
+        config.fbConfig = FB_USE_BOTH;
     }
 
     if(_bulb_init())
@@ -80,7 +83,7 @@ uint8_t bulb(bulb_config_t config, bulb_result_t *result)
         return _bulb_cleanup(ERROR_FAILED_TO_INIT);
     }
 
-    if(!AUX_TIP_READ())
+    if(!READ_FB())
     {
         return _bulb_cleanup(ERROR_INVALID_PC_STATE);
     }
@@ -96,7 +99,7 @@ uint8_t bulb(bulb_config_t config, bulb_result_t *result)
     uint8_t sync, lastSync = 1;
     while(state != ST_ERROR && state != ST_END)
     {
-        sync = AUX_TIP_READ();
+        sync = READ_FB();
         if(sync != lastSync)
         {
             if(state == ST_SYNCIN && sync == 0)
