@@ -6,7 +6,7 @@
 #define SHUTTER_RING_CLR() gpio_clear_output(SUNXI_PORT_D_BASE, SUNXI_PIO_19)
 
 #define HOTSHOE_READ() (gpio_get_input(SUNXI_PORT_B_BASE, SUNXI_PIO_02) ? 1 : 0)
-#define AUX_TIP_READ() (gpio_get_input(SUNXI_PORT_B_BASE, SUNXI_PIO_03) ? 1 : 0)
+#define AUX_TIP_READ() (gpio_get_input(SUNXI_PORT_B_BASE, SUNXI_PIO_03) ? 0 : 1)
 
 #define READ_FB() (HOTSHOE_READ() || !(config.fbConfig & FB_USE_HOTSHOE)) && (AUX_TIP_READ() || !(config.fbConfig & FB_USE_AUX_TIP)) 
 
